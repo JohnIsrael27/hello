@@ -1,0 +1,102 @@
+✅ Step 1 — Install kubectl (Kubernetes CLI)
+In VS Code Terminal:
+
+choco install kubernetes-cli -y
+Verify:
+
+kubectl version --client
+✅ If you see version info → installed successfully.
+
+✅ Step 2 — Install and Start Minikube
+Still in VS Code terminal:
+
+Install:
+choco install minikube -y
+Start cluster:
+minikube start --driver=docker
+Check status:
+
+minikube status
+kubectl get nodes
+✅ If node is Ready → Kubernetes cluster is working.
+
+✅ Step 3 — Create Kubernetes Pod YAML in VS Code
+In VS Code:
+
+File → New File
+
+Save as nginx-pod.yaml
+
+Paste:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+✅ Apply the pod (VS Code Terminal)
+kubectl apply -f nginx-pod.yaml
+Check:
+
+kubectl get pods
+Describe:
+
+kubectl describe pod nginx-pod
+Port-forward to access locally:
+
+kubectl port-forward pod/nginx-pod 8080:80
+Open browser:
+
+http://localhost:8080
+To delete:
+
+kubectl delete pod nginx-pod
+✅ Step 4 — Create a Deployment via kubectl
+kubectl create deployment my-nginx --image=nginx
+Check deployments & pods:
+
+kubectl get deployments
+kubectl get pods -l app=my-nginx
+✅ Step 5 — Scale Deployment
+Scale to 3 replicas:
+
+kubectl scale deployment my-nginx --replicas=3
+kubectl get pods
+✅ Step 6 — Rolling Update
+Update to a new image version:
+
+kubectl set image deployment/my-nginx nginx=nginx:1.25
+kubectl rollout status deployment/my-nginx
+Rollback if needed:
+
+kubectl rollout undo deployment/my-nginx
+✅ Step 7 — Expose Deployment as a Service
+Create NodePort service:
+
+kubectl expose deployment my-nginx --type=NodePort --port=80
+kubectl get svc
+Get the URL:
+
+minikube service my-nginx --url
+Open the URL in browser.
+
+Delete the service:
+
+kubectl delete svc my-nginx
+✅ Step 8 — Clean Up Everything
+kubectl delete deployment my-nginx
+kubectl delete svc my-nginx
+kubectl delete all --all -n default
+Stop Minikube:
+
+minikube stop
+Delete cluster:
+
+minikube delete
